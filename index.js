@@ -1,6 +1,5 @@
 import express from 'express'
 import fs from 'fs'
-import path from 'path'
 import { getYoutubeId } from './utils.js'
 import { createWaveform } from './terminalCommands.js'
 
@@ -16,9 +15,11 @@ app.get('/waveform', (req, res) => {
 		responseWithJsonFile(filePath, res)
 		// res.send(`waveform for <b>${folderName}</b> exists`)
 	} else {
-		console.time('x')
+		console.time('time')
 		createWaveform(materialId)
-		console.timeEnd('x')
+		console.timeEnd('time')
+		// it is expensive to save audio files, so we remove them
+		removeAudioFiles(folderName)
 		responseWithJsonFile(filePath, res)
 	}
 })
@@ -27,6 +28,18 @@ const responseWithJsonFile = (filePath, res) => {
 	const jsonContent = fs.readFileSync(filePath, 'utf-8')
 	res.header('Content-Type', 'application/json')
 	res.send(jsonContent)
+}
+
+const removeAudioFiles = folderName => {
+	removeFile(`${folderName}/audio.m4a`)
+	removeFile(`${folderName}/audio.wav`)
+}
+
+const removeFile = filePath => {
+	fs.unlink(filePath, err => {
+		if (err) throw err
+		console.log(`${filePath} was deleted`)
+	})
 }
 
 app.listen(port, () => {

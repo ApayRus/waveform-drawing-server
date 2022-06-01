@@ -1,0 +1,19 @@
+{
+	"name": "wave-drawer-server",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "server drawing waveform by request ",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node index.js"
+	},
+	"keywords": [
+		"waveform"
+	],
+	"author": "ApayRus",
+	"license": "MIT",
+	"dependencies": {
+		"express": "^4.18.1"
+	}
+}

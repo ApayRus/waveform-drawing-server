@@ -1,10 +1,20 @@
 import express from 'express'
 import fs from 'fs'
+import cors from 'cors'
 import { getYoutubeId } from './utils.js'
 import { createWaveform } from './terminalCommands.js'
 
 const app = express()
 const port = 3001
+
+const corsOptions = {
+	origin: '*',
+	methods: 'GET',
+	preflightContinue: false,
+	optionsSuccessStatus: 204
+}
+
+app.use(cors(corsOptions))
 
 app.get('/waveform', (req, res) => {
 	const { id, link } = req.query

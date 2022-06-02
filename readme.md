@@ -1,10 +1,12 @@
 # Waveform drawing server for youtube videos
 
-Input:
+This is not the correct title. The server generates and returns peaks, that you can use for drawing waveform (with lots of tools). Peaks are audio signal level digital values for time spots.
+
+Input (REST API end point):
 
 `http://localhost:3001/waveform/?link=https://www.youtube.com/watch?v=3dqXHHCc5lA`
 
-Output:
+Output (JSON):
 
 ```json
 {
@@ -26,13 +28,13 @@ You should have installed on your machine (server) :
 - [ffmpeg](https://ffmpeg.org/)
 - [audioWaveform](https://github.com/bbc/audiowaveform)
 
+This server (`Express.js`) will use all those apps with `child_process.exec(command)`
+
 Clone this repo and run `npm i`
 
-`Express.js` server will use all those apps with `child_process.exec(command)`
+## Hot it works
 
-## Process
-
-1. `yt-dlp` downloads smallest `m4a` audio file from youtube on the server
+1. `yt-dlp` downloads smallest `m4a` audio file from youtube to the server
 
 ```bash
 yt-dlp -f wa[ext=m4a] youtu.be/3dqXHHCc5lA -o audio.m4a
@@ -56,14 +58,25 @@ audiowaveform --pixels-per-second 10 -i audio.wav -o peaks.json -b 8
 
 We use `wav` over `mp3` (200mb vs 10mb) because it is faster to get peaks from it. After execution we store `peaks.json` file for requests in the future and delete audio files.
 
-We use this server for online subtitle editor with the [wavesurfer.js](https://wavesurfer-js.org/)
+On revisiting the same material, the server returns already generated peaks.
 
 ## Examples
 
-How does waveform look with peaks
+We use this server for online subtitle editor with the [wavesurfer.js](https://wavesurfer-js.org/) and its [Regions](https://wavesurfer-js.org/plugins/regions.html) plugin.
+
+How does waveform peaks look depending on `--pixels-per-second` param:
 
 `--pixels-per-second 25`
 ![Screenshot from 2022-06-01 17-58-10](https://user-images.githubusercontent.com/1222611/171491245-23daf902-d477-4b08-88fe-23ea2cf8ec0f.png)
 
 `--pixels-per-second 10`
 ![Screenshot from 2022-06-01 17-40-31](https://user-images.githubusercontent.com/1222611/171491250-09cdd14e-ffda-4d2e-8d05-3a0108888fd8.png)
+
+`Audiowaveform` default value for `--pixels-per-second` is 100. The table below shows the relationship between file size and `--pixels-per-second` value for 50 min video.
+
+| --pixels-per-second | json file size (kb) |
+| ------------------- | ------------------- |
+| 100                 | 1600                |
+| 50                  | 800                 |
+| 25                  | 400                 |
+| 10                  | 160                 |
